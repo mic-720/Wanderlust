@@ -1,7 +1,7 @@
 if(process.env.NODE_ENV != 'production'){
   require('dotenv').config() 
 }
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -73,9 +73,9 @@ app.use((req, res, next) => {
 });
 
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://wanderlust-e3f3.onrender.com' : `http://localhost:${port}`;
-app.use(`${baseUrl}/listings`, listingRouter);
-app.use(`${baseUrl}/listings/:id/reviews`, reviewRouter);
-app.use(`${baseUrl}/`,userRouter)
+app.use(`/listings`, listingRouter);
+app.use(`/listings/:id/reviews`, reviewRouter);
+app.use(`/`,userRouter)
 
 // main()
 //   .then(() => {
