@@ -13,7 +13,7 @@ a {
 
 /* Navbar */
 .navbar {
-  height: 5rem;
+  height: 4.5rem;
   border-bottom: 1px solid rgb(231, 231, 231);
   position: sticky;
   top: 0;
@@ -106,4 +106,9 @@ footer > div {
 
 .btns {
   display: flex;
+}
+
+#map {
+  height: 350px;
+  width: 90vh;
 }

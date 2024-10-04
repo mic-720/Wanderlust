@@ -1,13 +1,18 @@
+if(process.env.NODE_ENV != 'production'){
+  require('dotenv').config() 
+}
 const express = require("express");
 const port = 3000;
 const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 var methodOverride = require("method-override");
 var ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
+
 const flash = require("connect-flash");
 
 const passport = require("passport");
@@ -27,9 +32,19 @@ app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.engine("ejs", ejsMate);
-
+const store = MongoStore.create({
+  mongoUrl: process.env.MONGO_URI,
+  crypto: {
+    secret: process.env.SECRET,
+    touchAfter: 24*60*60
+  }
+})
+store.on("error", () => {
+  console.log("Error in Mongo Store ",err)
+})
 const sessionOptions = {
-  secret: "secretcode",
+  store,
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -38,6 +53,8 @@ const sessionOptions = {
     httpOnly: true,
   },
 };
+
+
 
 app.use(session(sessionOptions));
 app.use(flash());
@@ -59,30 +76,30 @@ app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/",userRouter)
 
-main()
-  .then(() => {
-    console.log("connection successful...");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// main()
+//   .then(() => {
+//     console.log("connection successful...");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
-async function main() {
-  await mongoose.connect(MONGO_URL);
-}
+// async function main() {
+//   await mongoose.connect(MONGO_URL);
+// }
 
 app.get("/", (req, res) => {
   res.redirect("/listings")
 });
 
-app.get("/demo",async (req,res)=>{
-  let fakeUser = new User({
-    email: "user@gmail.com",
-    username: "user"
-  })
-  let registeredUser = await User.register(fakeUser,"password1")
-  res.send(registeredUser)
-})
+// app.get("/demo",async (req,res)=>{
+//   let fakeUser = new User({
+//     email: "user@gmail.com",
+//     username: "user"
+//   })
+//   let registeredUser = await User.register(fakeUser,"password1")
+//   res.send(registeredUser)
+// })
 
 // app.get("/testListing", async (req, res) => {
 //     let sampleListing = new Listing({
@@ -108,6 +125,12 @@ app.use((err, req, res, next) => {
   res.status(status).render("error.ejs", { err });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at port : ${port}`);
+// app.listen(port, () => {
+//   console.log(`Server is running at port : ${port}`);
+// });
+
+mongoose.connect(process.env.MONGO_URI).then(() => {
+  app.listen(3000, () => {
+    console.log(`Connected to DB and running on port http://localhost:${3000}/`);
+  });
 });
