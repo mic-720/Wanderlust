@@ -3,14 +3,12 @@ const ExpressError = require("../utils/ExpressError.js");
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
-const baseUrl = process.env.NODE_ENV === 'production' ? 'https://wanderlust-e3f3.onrender.com' : `http://localhost:${process.env.PORT}`;
 
 
 const index = async (req, res) => {
   const allListings = await Listing.find();
   res.render("./listings/index.ejs", {
     allListings,
-    baseUrl
   });
 };
 

@@ -72,7 +72,6 @@ app.use((req, res, next) => {
   next();
 });
 
-const baseUrl = process.env.NODE_ENV === 'production' ? 'https://wanderlust-e3f3.onrender.com' : `http://localhost:${port}`;
 app.use(`/listings`, listingRouter);
 app.use(`/listings/:id/reviews`, reviewRouter);
 app.use(`/`,userRouter)
@@ -132,6 +131,6 @@ app.use((err, req, res, next) => {
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
   app.listen(port, () => {
-    console.log(`Connected to DB and running on port http://localhost:${port}/`);
+    console.log(`Connected to DB and running on port:${port}/`);
   });
 });
